@@ -5,7 +5,7 @@ import SimplePeer from 'simple-peer';
 import CopyToClipboard from 'react-copy-to-clipboard';
 
 const VideoChat = () => {
-  const [socket, setSocket] = useState(null); // Socket state'ini tanımlıyoruz
+  const [socket, setSocket] = useState(null); // Socket.IO bağlantısını saklamak
   const [callAccepted, setCallAccepted] = useState(false);
   const [callEnded, setCallEnded] = useState(false);
   const [stream, setStream] = useState();
