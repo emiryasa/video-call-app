@@ -75,9 +75,10 @@ const VideoChat = () => {
       socket.emit('callUser', { userToCall: id, signalData: data, from: me, name});
     });
     peer.on('stream', (currentStream) => {
-      userVideo.current.srcObject = currentStream;
+      if (userVideo.current) { // Ensure userVideo.current is not null
+        userVideo.current.srcObject = currentStream; // Assign srcObject if ref is not null
+      }
     });
-
     socket.on('callAccepted', (signal) => {
       setCallAccepted(true);
       peer.signal(signal);
@@ -88,12 +89,20 @@ const VideoChat = () => {
 
   const leaveCall = () => {
     setCallEnded(true);
-
+    
     // Bağlantıyı sonlandırmak ve sayfayı yeniden yüklemek
     connectionRef.current && connectionRef.current.destroy();
-    window.location.reload();
-  };
 
+    socket.emit('endCall');
+  };
+  
+  useEffect(() => {
+    if (socket) {
+      socket.on('callEnded', () => {
+        window.location.reload();
+      });
+    }
+  }, [socket]);
   return (
     <>
       <div className="flex justify-center items-center">
