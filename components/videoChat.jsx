@@ -37,6 +37,7 @@ const VideoChat = () => {
     };
   }, []);
 
+
   useEffect(() => {
     if (socket) {
       socket.on('me', (id) => setMe(id));
@@ -86,18 +87,22 @@ const VideoChat = () => {
     connectionRef.current && connectionRef.current.destroy();
 
     socket.emit('endCall');
-
   };
+  
   useEffect(() => {
     if (socket) {
       socket.on('callEnded', () => {
         // Karşı tarafın video elementini kaldır
-        if (userVideo.current) {
+        if (userVideo.current && userVideo.current.srcObject) {
           userVideo.current.srcObject = null; // Video akışını temizle
           userVideo.current.remove();
-          const nameElement = document.querySelector("#armut")// Video elementini kaldır
-          if (nameElement) {
-            nameElement.remove();
+          const videoElement = document.querySelector("#armut")// Video elementini kaldır
+          const elma = document.querySelector("#elma")
+          if (videoElement) {
+            videoElement.remove();
+          }
+          if (elma) {
+            elma.remove();
           }
         }
       });
@@ -159,11 +164,11 @@ const VideoChat = () => {
                     placeholder="ID to call"
                   />
                   {callAccepted && !callEnded ? (
-                    <button onClick={leaveCall} className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 focus:outline-none mt-4">
+                    <button id="elma" onClick={leaveCall} className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 focus:outline-none mt-4">
                       Hang Up
                     </button>
                   ) : (
-                    <button onClick={() => callUser(idToCall)} className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none mt-4">
+                    <button onClick={() => callUser(idToCall)}  className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none mt-4">
                       Call
                     </button>
                   )}
