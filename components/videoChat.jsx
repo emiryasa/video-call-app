@@ -1,12 +1,11 @@
-'use client';
+'use client'
 import React, { useState, useRef, useEffect } from 'react';
 import { io } from 'socket.io-client';
 import SimplePeer from 'simple-peer';
 import CopyToClipboard from 'react-copy-to-clipboard';
 
-const socket = io('http://localhost:3001');
-
 const VideoChat = () => {
+  const [socket, setSocket] = useState(null); // Socket state'ini tanımlıyoruz
   const [callAccepted, setCallAccepted] = useState(false);
   const [callEnded, setCallEnded] = useState(false);
   const [stream, setStream] = useState();
@@ -18,55 +17,69 @@ const VideoChat = () => {
   const myVideo = useRef(null);
   const userVideo = useRef(null);
   const connectionRef = useRef(null);
-
+  
   useEffect(() => {
+    // Socket.IO bağlantısını oluşturmak
+    const newSocket = io('http://localhost:3001');
+    setSocket(newSocket);
+
+    // Navigator mediaDevices'tan kullanıcı izni almak
     navigator.mediaDevices.getUserMedia({ video: true, audio: true })
       .then((currentStream) => {
         setStream(currentStream);
-
         myVideo.current && (myVideo.current.srcObject = currentStream);
+      })
+      .catch(error => {
+        console.error('Media permission denied or error occurred: ', error);
       });
 
-    socket.on('me', (id) => { setMe(id) });
-
-    socket.on('callUser', ({ from, name: callerName, signal }) => {
-      setCall({ isReceivingCall: true, from, name: callerName, signal });
-    });
-
+    return () => {
+      // ComponentWillUnmount gibi, bileşen kaldırıldığında socket bağlantısını temizle
+      newSocket.disconnect();
+    };
   }, []);
+
+  useEffect(() => {
+    // socket değiştiğinde ve me event'i geldiğinde çalışır
+    if (socket) {
+      socket.on('me', (id) => {
+        setMe(id);
+      });
+      
+      socket.on('callUser', ({ from, name: callerName, signal }) => {
+        setCall({ isReceivingCall: true, from, name: callerName, signal });
+      });
+    }
+  }, [socket]);
 
   const answerCall = () => {
     setCallAccepted(true);
 
+    // Peer bağlantısını oluşturmak ve olayları dinlemeye başlamak
     const peer = new SimplePeer({ initiator: false, trickle: false, stream });
-
+    peer.signal(call.signal);
     peer.on('signal', (data) => {
       socket.emit('answerCall', { signal: data, to: call.from });
     });
-
     peer.on('stream', (currentStream) => {
       userVideo.current.srcObject = currentStream;
     });
-
-    peer.signal(call.signal);
 
     connectionRef.current = peer;
   };
 
   const callUser = (id) => {
+    // Peer bağlantısını oluşturmak ve olayları dinlemeye başlamak
     const peer = new SimplePeer({ initiator: true, trickle: false, stream });
-
     peer.on('signal', (data) => {
-      socket.emit('callUser', { userToCall: id, signalData: data, from: me, name });
+      socket.emit('callUser', { userToCall: id, signalData: data, from: me, name});
     });
-
     peer.on('stream', (currentStream) => {
       userVideo.current.srcObject = currentStream;
     });
 
     socket.on('callAccepted', (signal) => {
       setCallAccepted(true);
-
       peer.signal(signal);
     });
 
@@ -76,6 +89,7 @@ const VideoChat = () => {
   const leaveCall = () => {
     setCallEnded(true);
 
+    // Bağlantıyı sonlandırmak ve sayfayı yeniden yüklemek
     connectionRef.current && connectionRef.current.destroy();
     window.location.reload();
   };
