@@ -84,7 +84,7 @@ const VideoChat = () => {
     setCallEnded(true);
 
     connectionRef.current && connectionRef.current.destroy();
-  
+
     socket.emit('endCall');
 
   };
@@ -94,7 +94,7 @@ const VideoChat = () => {
         // Karşı tarafın video elementini kaldır
         if (userVideo.current) {
           userVideo.current.srcObject = null; // Video akışını temizle
-          userVideo.current.remove(); 
+          userVideo.current.remove();
           const nameElement = document.querySelector("#armut")// Video elementini kaldır
           if (nameElement) {
             nameElement.remove();
@@ -123,12 +123,13 @@ const VideoChat = () => {
         )}
         {callAccepted && !callEnded && (
           <div className="border-2 border-black rounded-lg p-4 m-4" id="armut">
-           <h5 >{call.name || 'Name'}</h5>
+            <h5 >{call.name || 'Name'}</h5>
             <video playsInline ref={userVideo} autoPlay className="w-64 md:w-80" />
           </div>
         )}
-        {/* Options bileşenini burada yerleştiriyoruz */}
-        <Options stream={stream} />
+
+        <Options stream={stream} /> {/*Options bileşenini çağırdık*/}
+
         <div className="w-full md:w-3/4 lg:w-1/2 xl:w-1/3 mx-auto mt-8">
           <div className="p-8 border-2 border-black">
             <div className="flex flex-col" noValidate autoComplete="off">
