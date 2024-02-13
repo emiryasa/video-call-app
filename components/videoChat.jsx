@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { io } from 'socket.io-client';
 import SimplePeer from 'simple-peer';
 import CopyToClipboard from 'react-copy-to-clipboard';
-import Options from './Options'; // Options bileşenini import ettik
+import Options from './Options'; 
 
 const VideoChat = ({ roomID }) => {
   const [socket, setSocket] = useState(null);
