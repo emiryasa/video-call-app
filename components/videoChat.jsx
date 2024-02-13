@@ -20,7 +20,7 @@ const VideoChat = ({ roomID }) => {
   const connectionRef = useRef(null);
 
   useEffect(() => {
-    const newSocket = io('http://localhost:3001');
+    const newSocket = io('https://video-call-server-4vj1.onrender.com/');
     setSocket(newSocket);
 
     navigator.mediaDevices.getUserMedia({ video: true, audio: true })

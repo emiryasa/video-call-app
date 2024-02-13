@@ -1,10 +1,8 @@
-import VideoChat from "@/components/VideoChat";
-
+import CreateRoom from "@/components/CreateRoom";
 export default function Home() {
   return (
-    <main className="">
-      <VideoChat />
-      
+    <main className="flex h-screen items-center justify-center">
+     <CreateRoom/>
     </main>
   );
 }
