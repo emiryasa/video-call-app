@@ -1,4 +1,4 @@
-'use client';
+/*'use client';
 import React from "react";
 import { v1 as uuid } from "uuid";
 
@@ -18,4 +18,4 @@ const CreateRoom = () => {
     );
 };
 
-export default CreateRoom;
+export default CreateRoom;*/
