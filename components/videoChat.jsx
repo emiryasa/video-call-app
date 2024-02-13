@@ -5,7 +5,7 @@ import SimplePeer from 'simple-peer';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import Options from './Options'; 
 
-const VideoChat = ({ roomID }) => {
+const VideoChat = ({  }) => {
   const [socket, setSocket] = useState(null);
   const [callAccepted, setCallAccepted] = useState(false);
   const [callEnded, setCallEnded] = useState(false);
@@ -36,7 +36,7 @@ const VideoChat = ({ roomID }) => {
     return () => {
       newSocket.disconnect();
     };
-  }, [roomID]);
+  }, []);
 
 
   useEffect(() => {
