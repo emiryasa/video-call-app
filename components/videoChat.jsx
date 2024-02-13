@@ -5,7 +5,7 @@ import SimplePeer from 'simple-peer';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import Options from './Options'; // Options bileşenini import ettik
 
-const VideoChat = () => {
+const VideoChat = ({ roomID }) => {
   const [socket, setSocket] = useState(null);
   const [callAccepted, setCallAccepted] = useState(false);
   const [callEnded, setCallEnded] = useState(false);
@@ -27,6 +27,7 @@ const VideoChat = () => {
       .then((currentStream) => {
         setStream(currentStream);
         myVideo.current && (myVideo.current.srcObject = currentStream);
+
       })
       .catch(error => {
         console.error('Media permission denied or error occurred: ', error);
@@ -35,7 +36,7 @@ const VideoChat = () => {
     return () => {
       newSocket.disconnect();
     };
-  }, []);
+  }, [roomID]);
 
 
   useEffect(() => {
@@ -88,23 +89,12 @@ const VideoChat = () => {
 
     socket.emit('endCall');
   };
-  
+
   useEffect(() => {
     if (socket) {
       socket.on('callEnded', () => {
         // Karşı tarafın video elementini kaldır
-        if (userVideo.current && userVideo.current.srcObject) {
-          userVideo.current.srcObject = null; // Video akışını temizle
-          userVideo.current.remove();
-          const videoElement = document.querySelector("#armut")// Video elementini kaldır
-          const elma = document.querySelector("#elma")
-          if (videoElement) {
-            videoElement.remove();
-          }
-          if (elma) {
-            elma.remove();
-          }
-        }
+        window.location.reload();
       });
     }
   }, [socket]);
@@ -164,11 +154,11 @@ const VideoChat = () => {
                     placeholder="ID to call"
                   />
                   {callAccepted && !callEnded ? (
-                    <button id="elma" onClick={leaveCall} className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 focus:outline-none mt-4">
+                    <button onClick={leaveCall} className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 focus:outline-none mt-4">
                       Hang Up
                     </button>
                   ) : (
-                    <button onClick={() => callUser(idToCall)}  className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none mt-4">
+                    <button onClick={() => callUser(idToCall)} className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none mt-4">
                       Call
                     </button>
                   )}
