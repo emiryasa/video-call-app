@@ -20,7 +20,7 @@ const VideoChat = ({  }) => {
   const connectionRef = useRef(null);
 
   useEffect(() => {
-    const newSocket = io('https://video-call-server-4vj1.onrender.com/');
+    const newSocket = io('https://video-call-app-server-evtw.onrender.com/');
     setSocket(newSocket);
 
     navigator.mediaDevices.getUserMedia({ video: true, audio: true })
